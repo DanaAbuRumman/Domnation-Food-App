@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AuthScreeen extends StatelessWidget {
+class SignIn extends StatelessWidget {
   static const routeName = '/auth';
 
   @override
@@ -34,6 +34,7 @@ class AuthScreeen extends StatelessWidget {
                     style: TextStyle(
                     color: Colors.white ,
                     fontSize: 25,
+
                 
 
                     ),)

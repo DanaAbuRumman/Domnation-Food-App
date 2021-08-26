@@ -1,4 +1,3 @@
-import 'package:final_project/screens/Auth_Screeen.dart';
 import 'package:final_project/screens/auth/splash_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: AuthScreeen(),
+      home: SplashScreen(),
     );
   }
 }
