@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:final_project/screens/auth/sign_in.dart';
 import 'package:flutter/material.dart';
 
+import 'phone_number.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -19,12 +21,12 @@ class _SplashScreenState extends State<SplashScreen> {
     _timer = new Timer.periodic(
       oneSec,
       (Timer timer) {
-        if (_start == 0) {
+        if (_start == 1) {
           setState(() {
             timer.cancel();
           });
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => SignIn()));
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => PhoneAuth()), (route) => false);
         } else {
           setState(() {
             _start--;
