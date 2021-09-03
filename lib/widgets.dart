@@ -15,7 +15,7 @@ Widget textFiled({
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.deepOrangeAccent),
+        // labelStyle: TextStyle(color: Colors.deepOrangeAccent),
         border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -30,8 +30,8 @@ Widget textFiled({
           ),
         ),
       ),
-      validator: (email) {
-        return function(email!);
+      validator: (value) {
+        return function(value!);
       },
     ),
   );

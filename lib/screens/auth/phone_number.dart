@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../constant.dart';
+import 'opt_code.dart';
 
 class PhoneAuth extends StatefulWidget {
   const PhoneAuth({Key? key}) : super(key: key);
@@ -12,9 +13,8 @@ class PhoneAuth extends StatefulWidget {
 
 class _PhoneAuthState extends State<PhoneAuth> {
   bool _load = false;
-  String errorPhone = "";
-  String buttonText = "Send Code";
-  var signInKey = GlobalKey<FormState>();
+  String error = "";
+  var phoneKey = GlobalKey<FormState>();
   var phoneNumber = TextEditingController();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   Future<void> sendCode() async {
@@ -28,20 +28,18 @@ class _PhoneAuthState extends State<PhoneAuth> {
               });
             },
             verificationFailed: (FirebaseAuthException authException) {
-              print("failed");
-
               print(authException.message);
               setState(() {
-                errorPhone = "This phone is not valid";
+                error = "This phone is not valid";
                 _load = false;
               });
             },
             codeSent: (String verificationId, [int? forceResendingToken]) {
-              // Navigator.of(context).push(MaterialPageRoute(
-              // builder: (_) => OTPCode(
-              //       phone: "+962${phoneNumber.text}",
-              //       verification: verificationId,
-              //     )));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => OPTCode(
+                        phone: "+962${phoneNumber.text}",
+                        code: verificationId,
+                      )));
               print("send");
 
               setState(() {
@@ -50,9 +48,10 @@ class _PhoneAuthState extends State<PhoneAuth> {
             },
             codeAutoRetrievalTimeout: (String verificationId) {
               print(verificationId);
-              buttonText = "Resend code";
-              errorPhone = "";
-              print("Timout");
+              error = "";
+              setState(() {
+                _load = false;
+              });
             })
         .catchError((e) {
       setState(() {
@@ -68,7 +67,7 @@ class _PhoneAuthState extends State<PhoneAuth> {
       body: Stack(
         children: [
           Form(
-            key: signInKey,
+            key: phoneKey,
             child: SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.all(15),
@@ -117,13 +116,13 @@ class _PhoneAuthState extends State<PhoneAuth> {
                         labelStyle: TextStyle(fontSize: 18),
                       ),
                     ),
-                    if (errorPhone != "")
+                    if (error != "")
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: SizedBox(
                           width: getWidth(context),
                           child: Text(
-                            errorPhone,
+                            error,
                             style: TextStyle(color: Colors.red, fontSize: 15),
                           ),
                         ),
@@ -135,7 +134,7 @@ class _PhoneAuthState extends State<PhoneAuth> {
                         onPressed: _load
                             ? null
                             : () {
-                                if (signInKey.currentState!.validate()) {
+                                if (phoneKey.currentState!.validate()) {
                                   setState(() {
                                     _load = true;
                                   });

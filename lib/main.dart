@@ -1,8 +1,10 @@
-import 'package:final_project/screens/auth/sign_in.dart';
-import 'package:final_project/screens/auth/sign_up.dart';
 import 'package:final_project/screens/auth/splash_screen.dart';
+import 'package:final_project/screens/user/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
+import 'screens/auth/opt_code.dart';
+import 'screens/auth/phone_number.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,8 +34,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routes: {
-        SignIn.routeName: (_) => SignIn(),
-        SignUp.routeName: (_) => SignUp(),
+        '/PhoneAuth': (_) => PhoneAuth(),
+        '/HomePage': (_) => HomePage()
       },
       home: SplashScreen(),
     );
