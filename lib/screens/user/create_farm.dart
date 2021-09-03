@@ -8,6 +8,7 @@ import 'package:final_project/services/farm_service.dart';
 import 'package:final_project/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
@@ -32,15 +33,16 @@ class _CreateFarmState extends State<CreateFarm> {
   Iterable markers = [];
   List<File> images = [];
   List urlImages = [];
-  double? lat;
-  double? long;
+  double lat = 0.0;
+  double long = 0.0;
   Completer<GoogleMapController> _controller = Completer();
-
+  bool show_map = false;
   bool isLoading = false;
   var createFarm = GlobalKey<FormState>();
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
+
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return Future.error('Location services are disabled.');
@@ -65,17 +67,17 @@ class _CreateFarmState extends State<CreateFarm> {
     return await Geolocator.getCurrentPosition();
   }
 
-  void getAddress(double lati, double longi) async {
-    final coordinates = new Coordinates(lati, longi);
-    var addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
-    var first = addresses.first;
-    debugPrint("${first.locality}");
-    setState(() {
-      _goToLocationOnMap(lati, longi);
-    });
-    print("Address :${first.addressLine.toString()}");
-  }
+  // void getAddress(double lati, double longi) async {
+  //   final coordinates = new Coordinates(lati, longi);
+  //   var addresses =
+  //       await Geocoder.local.findAddressesFromCoordinates(coordinates);
+  //   var first = addresses.first;
+  //   debugPrint("${first.locality}");
+  //   setState(() {
+  //     _goToLocationOnMap(lati, longi);
+  //   });
+  //   print("Address :${first.addressLine.toString()}");
+  // }
 
   Future<void> _goToLocationOnMap(double latitude, double longitude) async {
     final GoogleMapController controller = await _controller.future;
@@ -112,7 +114,7 @@ class _CreateFarmState extends State<CreateFarm> {
   }
 
   Future<void> create() async {
-    for (var item in images) {
+    for (var item in images.reversed) {
       await uploadImage(item);
     }
     Farm model = new Farm();
@@ -127,7 +129,19 @@ class _CreateFarmState extends State<CreateFarm> {
     model.id = Uuid().v1();
 
     FarmService.createFarm(model).then((value) {
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => FarmView()));
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => FarmView()))
+          .then((value) {
+        description.clear();
+        urlImages = [];
+        images = [];
+        show_map = false;
+        title.clear();
+        phone.clear();
+        price.clear();
+        isLoading = false;
+        setState(() {});
+      });
     });
   }
 
@@ -157,7 +171,6 @@ class _CreateFarmState extends State<CreateFarm> {
     _determinePosition().then((value) {
       lat = value.latitude;
       long = value.longitude;
-      setState(() {});
     });
   }
 
@@ -255,7 +268,7 @@ class _CreateFarmState extends State<CreateFarm> {
                       if (value.length != 10)
                         return "Phone number should content 10 numbers";
                     }),
-                if (lat != null && long != null)
+                if (show_map)
                   Container(
                     padding: EdgeInsets.all(20),
                     alignment: Alignment.centerRight,
@@ -264,7 +277,7 @@ class _CreateFarmState extends State<CreateFarm> {
                     child: GoogleMap(
                       mapType: MapType.hybrid,
                       initialCameraPosition: CameraPosition(
-                        target: LatLng(lat!, long!),
+                        target: LatLng(lat, long),
                         zoom: 14.4746,
                       ),
                       markers: Set.from(markers),
@@ -277,49 +290,106 @@ class _CreateFarmState extends State<CreateFarm> {
                     ),
                   ),
                 ElevatedButton(
-                    onPressed: () {
-                      if (lat != null && long != null) {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
-                                builder: (_) => Map(
-                                      lat: lat!,
-                                      long: long!,
-                                    )))
-                            .then((value) {
-                          if (value != null) {
-                            _goToLocationOnMap(
-                                value!.latitude, value.longitude);
-                            setState(() {});
-                          }
-                        });
-                      } else {
-                        _determinePosition().then((value) {
-                          lat = value.latitude;
-                          long = value.longitude;
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                  builder: (_) => Map(
-                                        lat: lat!,
-                                        long: long!,
-                                      )))
-                              .then((value) {
-                            if (value != null) {
-                              _goToLocationOnMap(
-                                  value!.latitude, value.longitude);
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            if (lat != 0.0 && long != 0.0) {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (_) => Map(
+                                            lat: lat,
+                                            long: long,
+                                          )))
+                                  .then((value) {
+                                if (value != null) {
+                                  _goToLocationOnMap(
+                                      value!.latitude, value.longitude);
+                                  setState(() {
+                                    show_map = true;
+                                  });
+                                }
+                              });
+                            } else {
+                              _determinePosition().then((value) {
+                                lat = value.latitude;
+                                long = value.longitude;
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(
+                                        builder: (_) => Map(
+                                              lat: lat,
+                                              long: long,
+                                            )))
+                                    .then((value) {
+                                  if (value != null) {
+                                    _goToLocationOnMap(
+                                        value!.latitude, value.longitude);
+                                  }
+                                  setState(() {
+                                    show_map = true;
+                                  });
+                                });
+                              });
                             }
-                          });
-                        });
-                      }
-                    },
-                    child: Text(lat == null && long == null
-                        ? "Add Location"
-                        : "Change Location")),
-                ElevatedButton(
-                    onPressed: () {
-                      if (createFarm.currentState!.validate() &&
-                          images.isNotEmpty) create();
-                    },
-                    child: Text("Upload"))
+                          },
+                    child:
+                        Text(!show_map ? "Add Location" : "Change Location")),
+                !isLoading
+                    ? ElevatedButton(
+                        onPressed: () {
+                          if (createFarm.currentState!.validate()) {
+                            if (show_map && images.isNotEmpty) {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              create();
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      CupertinoAlertDialog(
+                                        title: new Text(
+                                          !show_map
+                                              ? "Please, add your location"
+                                              : "Please, add farm images",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize:
+                                                  getWidth(context) * 0.03),
+                                        ),
+                                        actions: <Widget>[
+                                          CupertinoDialogAction(
+                                              child: Text("Ok"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              }),
+                                        ],
+                                      )).then((value) {
+                                if (!show_map)
+                                  _determinePosition().then((value) {
+                                    lat = value.latitude;
+                                    long = value.longitude;
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (_) => Map(
+                                                  lat: lat,
+                                                  long: long,
+                                                )))
+                                        .then((value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          show_map = true;
+                                        });
+                                        _goToLocationOnMap(
+                                            value!.latitude, value.longitude);
+                                      }
+                                    });
+                                  });
+                              });
+                            }
+                          }
+                        },
+                        child: Text("Upload"))
+                    : CircularProgressIndicator()
               ],
             ),
           ),
