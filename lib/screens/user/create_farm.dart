@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:final_project/constant.dart';
 import 'package:final_project/models/farm_model.dart';
+import 'package:final_project/provider/farms.provider.dart';
 import 'package:final_project/screens/user/map.dart';
 import 'package:final_project/services/farm_service.dart';
 import 'package:final_project/widgets.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import 'farm_view.dart';
@@ -67,18 +69,6 @@ class _CreateFarmState extends State<CreateFarm> {
     return await Geolocator.getCurrentPosition();
   }
 
-  // void getAddress(double lati, double longi) async {
-  //   final coordinates = new Coordinates(lati, longi);
-  //   var addresses =
-  //       await Geocoder.local.findAddressesFromCoordinates(coordinates);
-  //   var first = addresses.first;
-  //   debugPrint("${first.locality}");
-  //   setState(() {
-  //     _goToLocationOnMap(lati, longi);
-  //   });
-  //   print("Address :${first.addressLine.toString()}");
-  // }
-
   Future<void> _goToLocationOnMap(double latitude, double longitude) async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
@@ -114,7 +104,7 @@ class _CreateFarmState extends State<CreateFarm> {
   }
 
   Future<void> create() async {
-    for (var item in images.reversed) {
+    for (var item in images) {
       await uploadImage(item);
     }
     Farm model = new Farm();
@@ -127,10 +117,15 @@ class _CreateFarmState extends State<CreateFarm> {
     model.phone = phone.text;
     model.user_phone = FirebaseAuth.instance.currentUser!.phoneNumber;
     model.id = Uuid().v1();
+    model.date = DateTime.now();
 
     FarmService.createFarm(model).then((value) {
+      Provider.of<FarmsProvider>(context, listen: false).addFarm(model);
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (_) => FarmView()))
+          .push(MaterialPageRoute(
+              builder: (_) => FarmView(
+                    model: model,
+                  )))
           .then((value) {
         description.clear();
         urlImages = [];
@@ -257,12 +252,14 @@ class _CreateFarmState extends State<CreateFarm> {
                 textFiled(
                     controller: price,
                     label: "Price",
+                    inputType: TextInputType.number,
                     function: (value) {
                       if (value.isEmpty) return "Price can't be empty";
                     }),
                 textFiled(
                     controller: phone,
                     label: "Phone",
+                    inputType: TextInputType.phone,
                     function: (value) {
                       if (value.isEmpty) return "Phone can't be empty";
                       if (value.length != 10)

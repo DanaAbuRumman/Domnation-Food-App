@@ -5,6 +5,7 @@ Widget textFiled({
   required TextEditingController controller,
   required String label,
   bool? isPassword = false,
+  TextInputType? inputType,
   required Function(String) function,
 }) {
   return Padding(
@@ -13,6 +14,7 @@ Widget textFiled({
       cursorColor: Colors.black,
       obscureText: isPassword!,
       controller: controller,
+      keyboardType: inputType,
       decoration: InputDecoration(
         labelText: label,
         // labelStyle: TextStyle(color: Colors.deepOrangeAccent),

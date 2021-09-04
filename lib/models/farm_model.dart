@@ -5,6 +5,7 @@ class Farm {
   double? lng;
   String? describe;
   String? phone;
+  DateTime? date;
   String? title;
   double? price;
   String? user_phone;
@@ -13,6 +14,9 @@ class Farm {
       : images = json['images'] ?? [],
         lat = json['lat'] ?? 0.0,
         lng = json['lng'] ?? 0.0,
+        date = json['date'] == null
+            ? null
+            : DateTime.parse(json['date'] as String),
         describe = json['describe'] ?? "",
         id = json['id'] ?? "",
         title = json['title'] ?? "",
@@ -25,6 +29,7 @@ class Farm {
         'describe': describe,
         'lat': lat,
         'lng': lng,
+        'date': date!.toIso8601String(),
         'user_phone': user_phone,
         'price': price,
         'phone': phone,

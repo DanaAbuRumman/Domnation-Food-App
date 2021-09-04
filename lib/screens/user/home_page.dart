@@ -1,6 +1,8 @@
-import 'package:final_project/screens/user/all_farm.dart';
+import 'package:final_project/provider/farms.provider.dart';
+import 'package:final_project/screens/user/all_farms/all_farm.dart';
 import 'package:final_project/screens/user/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'create_farm.dart';
 

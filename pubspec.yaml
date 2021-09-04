@@ -39,6 +39,9 @@ dependencies:
   geolocator: ^7.6.0
   flutter_geocoder: ^0.2.2-nullsafety
   uuid: ^3.0.4
+  provider: ^5.0.0
+  flutter_image_slideshow: ^0.1.1
+  url_launcher: ^6.0.9
 
 dev_dependencies:
   flutter_test:

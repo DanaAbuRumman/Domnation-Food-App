@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:final_project/provider/farms.provider.dart';
 import 'package:final_project/screens/user/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'phone_number.dart';
 
@@ -18,6 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   int _start = 5;
 
   void startTimer() {
+    Provider.of<FarmsProvider>(context, listen: false).initFarms();
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
