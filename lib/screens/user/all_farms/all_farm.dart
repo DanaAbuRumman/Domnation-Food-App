@@ -10,7 +10,14 @@ class AllFarm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(
+          "Vacation mood",
+          style: TextStyle(color: Theme.of(context).primaryColor),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
       body: ListView.builder(
           itemCount: context.watch<FarmsProvider>().getFarms().length,
           itemBuilder: (context, index) {

@@ -22,6 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void startTimer() {
     Provider.of<FarmsProvider>(context, listen: false).initFarms();
     const oneSec = const Duration(seconds: 1);
+
     _timer = new Timer.periodic(
       oneSec,
       (Timer timer) {
@@ -29,7 +30,10 @@ class _SplashScreenState extends State<SplashScreen> {
           setState(() {
             timer.cancel();
           });
-
+          if (FirebaseAuth.instance.currentUser != null &&
+              FirebaseAuth.instance.currentUser!.phoneNumber != null)
+            Provider.of<FarmsProvider>(context, listen: false)
+                .addPhone(FirebaseAuth.instance.currentUser!.phoneNumber!);
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                   builder: (_) => FirebaseAuth.instance.currentUser != null
@@ -61,46 +65,56 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Container(
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height,
-        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [Text("$_start")],
-            ),
-            Spacer(),
-            Column(
+          child: Stack(
+        children: [
+          Container(
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assests/logo.JPG"),
+                      fit: BoxFit.cover))),
+          Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height,
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  "Domnation Food",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [Text("$_start")],
                 ),
-                SizedBox(
-                  height: 20,
+                Spacer(),
+                Column(
+                  children: <Widget>[
+                    Container(
+                        height: MediaQuery.of(context).size.height / 2,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage("assests/logo.JPG")))),
+                    Text(
+                      "Vacation mood",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Be The Reason Someone Smile Today",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.black, fontSize: 20),
+                    )
+                  ],
                 ),
-                Text(
-                  "Be The Reason Someone Smile Today",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.black, fontSize: 20),
-                )
+                Spacer()
               ],
             ),
-            Container(
-                height: MediaQuery.of(context).size.height / 3,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage("assests/welcome.jpg")))),
-            Spacer()
-          ],
-        ),
+          ),
+        ],
       )),
     );
   }

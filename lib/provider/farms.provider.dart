@@ -4,10 +4,23 @@ import 'package:flutter/foundation.dart';
 
 class FarmsProvider with ChangeNotifier {
   List<Farm> farms = [];
+  String? phone = "";
   void addFarm(Farm data) {
     farms.add(data);
 
     notifyListeners();
+  }
+
+  void addPhone(String phone) {
+    if (phone != "")
+      this.phone = phone;
+    else
+      this.phone = null;
+    notifyListeners();
+  }
+
+  String? getPhone() {
+    return phone;
   }
 
   void initFarms() {

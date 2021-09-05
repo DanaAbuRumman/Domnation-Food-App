@@ -78,7 +78,7 @@ class _PhoneAuthState extends State<PhoneAuth> {
                       height: getHeight(context) * 0.15,
                     ),
                     Image.asset(
-                      "assests/Donate-Food.png",
+                      "assests/logo.JPG",
                       height: getWidth(context) * 0.5,
                       width: getWidth(context) * 0.5,
                     ),

@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:final_project/provider/farms.provider.dart';
 import 'package:final_project/screens/user/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
+import 'package:provider/provider.dart';
 
 import '../../constant.dart';
 
@@ -53,6 +55,8 @@ class _OPTCodeState extends State<OPTCode> {
     AuthCredential _credential = PhoneAuthProvider.credential(
         verificationId: widget.code!, smsCode: validationCode!);
     await auth.signInWithCredential(_credential).then((result) async {
+      Provider.of<FarmsProvider>(context, listen: false)
+          .addPhone(FirebaseAuth.instance.currentUser!.phoneNumber!);
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/HomePage', (route) => false);
     }).catchError((e) {
@@ -102,7 +106,7 @@ class _OPTCodeState extends State<OPTCode> {
                       height: getWidth(context) * 0.1,
                     ),
                     Image.asset(
-                      "images/label.png",
+                      "assests/logo.JPG",
                       height: getWidth(context) * 0.5,
                       width: getWidth(context) * 0.5,
                     ),
