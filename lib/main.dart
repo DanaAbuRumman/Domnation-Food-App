@@ -1,6 +1,7 @@
 import 'package:final_project/provider/farms.provider.dart';
 import 'package:final_project/screens/auth/splash_screen.dart';
 import 'package:final_project/screens/user/home_page.dart';
+import 'package:final_project/screens/user/my_farms.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +44,8 @@ class MyApp extends StatelessWidget {
             ),
             routes: {
               '/PhoneAuth': (_) => PhoneAuth(),
-              '/HomePage': (_) => HomePage()
+              '/HomePage': (_) => HomePage(),
+              '/MyFarms': (_) => MyFarms()
             },
             home: SplashScreen(),
           );

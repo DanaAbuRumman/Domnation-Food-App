@@ -33,6 +33,9 @@ class Profile extends StatelessWidget {
           ),
           Divider(),
           ListTile(
+            onTap: () {
+              Navigator.of(context).pushNamed("/MyFarms");
+            },
             title: Text(
               "My Farms",
               style: TextStyle(
